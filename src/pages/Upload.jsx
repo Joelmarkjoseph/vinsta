@@ -93,7 +93,7 @@ const Upload = () => {
         These pictures is under surveillence of college professors. so be
         careful while posting images.
       </h3>
-      <h4>Post images related to college and its events.</h4>
+      <h4>Post images related to college and its events only.</h4>
       <input type="file" accept="image/*" onChange={handleImageChange} />
 
       {preview && (

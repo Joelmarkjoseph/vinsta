@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
+import { useNavigate } from "react-router-dom";
+
 import {
   collection,
   query,
@@ -15,6 +17,7 @@ const UserDashboard = () => {
   const { user } = useAuth();
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -98,46 +101,82 @@ const UserDashboard = () => {
       {loading ? (
         <p>Loading images...</p>
       ) : images.length > 0 ? (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "10px",
-          }}
-        >
-          {images.map((image) => (
-            <div
-              key={image.id}
-              style={{ border: "1px solid #ccc", padding: "10px" }}
-            >
-              <img
-                src={image.imageBase64}
-                alt="Uploaded"
-                width="50%"
-                height="auto"
-              />
-              <p>
-                <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
-                  {image.title || "Untitled"}
-                </h3>
-                {new Date(image.uploadedAt?.seconds * 1000).toLocaleString()}
-              </p>
-              <button
-                onClick={() => handleDelete(image.id)}
-                style={{
-                  backgroundColor: "red",
-                  color: "white",
-                  padding: "5px",
-                  border: "none",
-                }}
+        <div>
+          <button
+            onClick={() => {
+              navigate("/upload");
+            }}
+            style={{
+              backgroundColor: "#ff4444",
+              color: "white",
+              padding: "10px 15px",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              marginBottom: "20px",
+            }}
+          >
+            Upload More Images
+          </button>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: "10px",
+            }}
+          >
+            {images.map((image) => (
+              <div
+                key={image.id}
+                style={{ border: "1px solid #ccc", padding: "10px" }}
               >
-                Delete
-              </button>
-            </div>
-          ))}
+                <img
+                  src={image.imageBase64}
+                  alt="Uploaded"
+                  width="50%"
+                  height="auto"
+                />
+                <p>
+                  <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
+                    {image.title || "Untitled"}
+                  </h3>
+                  {new Date(image.uploadedAt?.seconds * 1000).toLocaleString()}
+                </p>
+                <button
+                  onClick={() => handleDelete(image.id)}
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    padding: "5px",
+                    border: "none",
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
-        <p>No images uploaded yet.</p>
+        <div>
+          <p>No images uploaded yet.</p>
+          <button
+            onClick={() => {
+              navigate("/upload");
+            }}
+            style={{
+              backgroundColor: "#ff4444",
+              color: "white",
+              padding: "10px 15px",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              marginBottom: "20px",
+            }}
+          >
+            Upload Image
+          </button>
+        </div>
       )}
     </div>
   );
