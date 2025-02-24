@@ -91,6 +91,7 @@
   
     .nav-toggle {
       display: flex;
+      margin-right: 30px;
     }
   
     .bar.open:nth-child(1) {

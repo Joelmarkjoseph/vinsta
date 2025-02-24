@@ -13,7 +13,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       await signInWithPopup(auth, provider);
-      navigate("/gallery"); // Redirect after login
+      navigate("/dashboard"); // Redirect after login
     } catch (error) {
       console.error("Login failed:", error.message);
     }
@@ -47,7 +47,28 @@ const Login = () => {
       ) : (
         <>
           <h2>Login to Vinsta</h2>
-          <button onClick={handleLogin}>Login with Google</button>
+          <button
+            onClick={handleLogin}
+            style={{
+              backgroundColor: "#28a745", // Gray when uploading, Green otherwise
+              color: "white",
+              padding: "12px 20px",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "16px",
+              transition: "0.3s ease-in-out",
+              boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.2)",
+              marginTop: "10px",
+            }}
+            onMouseOver={(e) =>
+              !uploading && (e.target.style.backgroundColor = "#218838")
+            }
+            onMouseOut={(e) =>
+              !uploading && (e.target.style.backgroundColor = "#28a745")
+            }
+          >
+            Login with Google
+          </button>
         </>
       )}
     </div>
