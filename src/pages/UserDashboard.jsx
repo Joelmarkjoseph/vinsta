@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
-
 import {
   collection,
   query,
@@ -9,19 +8,25 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  updateDoc,
+  getDoc,
+  setDoc,
 } from "firebase/firestore";
 import { useAuth } from "../AuthContext";
-import { getAuth, signOut } from "firebase/auth"; // Import signOut
+import { getAuth, signOut } from "firebase/auth";
 
 const UserDashboard = () => {
   const { user } = useAuth();
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
       fetchUserImages();
+      fetchFollowData();
     }
   }, [user]);
 
@@ -44,6 +49,20 @@ const UserDashboard = () => {
     setLoading(false);
   };
 
+  const fetchFollowData = async () => {
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        setFollowers(data.followers?.length || 0);
+        setFollowing(data.following?.length || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching follow data:", error);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       await deleteDoc(doc(db, "images", id));
@@ -57,7 +76,7 @@ const UserDashboard = () => {
     const auth = getAuth();
     try {
       await signOut(auth);
-      window.location.href = "/"; // Redirect to home/login page
+      window.location.href = "/";
     } catch (error) {
       console.error("Error logging out:", error);
     }
@@ -67,6 +86,9 @@ const UserDashboard = () => {
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h2>Welcome, {user?.displayName}</h2>
       <p>Email: {user?.email}</p>
+      <p>
+        Followers: {followers} | Following: {following}
+      </p>
 
       {user?.photoURL && (
         <img
@@ -107,7 +129,7 @@ const UserDashboard = () => {
               navigate("/upload");
             }}
             style={{
-              backgroundColor: "#green",
+              backgroundColor: "#28a745",
               color: "white",
               padding: "10px 15px",
               border: "none",
@@ -136,10 +158,10 @@ const UserDashboard = () => {
                   width="50%"
                   height="auto"
                 />
+                <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
+                  {image.title || "Untitled"}
+                </h3>
                 <p>
-                  <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
-                    {image.title || "Untitled"}
-                  </h3>
                   {new Date(image.uploadedAt?.seconds * 1000).toLocaleString()}
                 </p>
                 <button
@@ -165,7 +187,7 @@ const UserDashboard = () => {
               navigate("/upload");
             }}
             style={{
-              backgroundColor: "#green",
+              backgroundColor: "#28a745",
               color: "white",
               padding: "10px 15px",
               border: "none",

@@ -10,6 +10,7 @@ import { AuthProvider } from "../src/AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "../src/pages/AdminRoute";
 import UserDashboard from "./pages/UserDashboard";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -53,6 +54,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ImageDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/:email"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />

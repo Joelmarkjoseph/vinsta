@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
+import { Link } from "react-router-dom"; // Import Link
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+
 import {
   collection,
   query,
@@ -17,6 +20,7 @@ const Gallery = () => {
   const [images, setImages] = useState([]);
   const [showHeart, setShowHeart] = useState(null);
   const [showBrokenHeart, setShowBrokenHeart] = useState(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const q = query(collection(db, "images"), orderBy("uploadedAt", "desc"));
@@ -45,7 +49,12 @@ const Gallery = () => {
       console.error("Error updating likes: ", error);
     }
   };
+  const goToProfile = (userEmail) => {
+    const userEmailWithoutDomain = userEmail.split("@")[0];
 
+    if (!userEmail) return;
+    navigate(`/profile/${encodeURIComponent(userEmailWithoutDomain)}`);
+  };
   const handleDoubleTap = (imageId, likedUsers) => {
     const userLiked = likedUsers?.includes(user?.uid);
     handleLike(imageId, likedUsers);
@@ -93,39 +102,59 @@ const Gallery = () => {
                   marginBottom: "10px",
                 }}
               >
-                {image.userPhoto ? (
-                  <img
-                    src={image.userPhoto}
-                    alt="User"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
-                ) : (
+                {/* User Profile */}
+                <Link
+                  to={`/profile/${encodeURIComponent(
+                    image.userEmail.split("@")[0]
+                  )}`}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
                   <div
                     style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      background: "#ccc",
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "14px",
+                      gap: "10px",
+                      marginBottom: "10px",
+                      cursor: "pointer",
                     }}
                   >
-                    ?
+                    {image.userPhoto ? (
+                      <img
+                        src={image.userPhoto}
+                        alt="User"
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          borderRadius: "50%",
+                          background: "#ccc",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "14px",
+                        }}
+                      >
+                        ?
+                      </div>
+                    )}
+                    <div style={{ textAlign: "left" }}>
+                      <strong>{image.userName || "Unknown User"}</strong>
+                      <p
+                        style={{ fontSize: "12px", color: "#666", margin: "0" }}
+                      >
+                        {image.userEmail || "No email"}
+                      </p>
+                    </div>
                   </div>
-                )}
-                <div style={{ textAlign: "left" }}>
-                  <strong>{image.userName || "Unknown User"}</strong>
-                  <p style={{ fontSize: "12px", color: "#666", margin: "0" }}>
-                    {image.userEmail || "No email"}
-                  </p>
-                </div>
+                </Link>
               </div>
 
               <div style={{ position: "relative" }}>

@@ -2,18 +2,50 @@ import React from "react";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../src/AuthContext"; // Import useAuth hook
+import { useAuth } from "../../src/AuthContext";
+import { db } from "../firebaseConfig";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
 const Login = () => {
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
-  const { user } = useAuth(); // Get user from context
+  const { user } = useAuth();
 
   const handleLogin = async () => {
     try {
-      await signInWithPopup(auth, provider);
-      navigate("/gallery"); // Redirect after login
+      const result = await signInWithPopup(auth, provider);
+      const loggedInUser = result.user;
+
+      // Reference to Firestore document
+      const userRef = doc(db, "users", loggedInUser.uid);
+
+      // Check if user already exists
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) {
+        // Create user document with followers & following lists
+        await setDoc(userRef, {
+          name: loggedInUser.displayName,
+          email: loggedInUser.email,
+          uid: loggedInUser.uid,
+          photoURL: loggedInUser.photoURL,
+          createdAt: new Date(),
+          followers: [], // Initialize empty followers list
+          following: [], // Initialize empty following list
+        });
+      } else {
+        // Update `photoURL` if it's missing or changed
+        if (
+          !userSnap.data().photoURL ||
+          userSnap.data().photoURL !== loggedInUser.photoURL
+        ) {
+          await updateDoc(userRef, {
+            photoURL: loggedInUser.photoURL,
+          });
+        }
+      }
+
+      navigate("/gallery");
     } catch (error) {
       console.error("Login failed:", error.message);
     }
@@ -50,7 +82,7 @@ const Login = () => {
           <button
             onClick={handleLogin}
             style={{
-              backgroundColor: "#28a745", // Gray when uploading, Green otherwise
+              backgroundColor: "#28a745",
               color: "white",
               padding: "12px 20px",
               border: "none",
@@ -60,12 +92,8 @@ const Login = () => {
               boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.2)",
               marginTop: "10px",
             }}
-            onMouseOver={(e) =>
-              !uploading && (e.target.style.backgroundColor = "#218838")
-            }
-            onMouseOut={(e) =>
-              !uploading && (e.target.style.backgroundColor = "#28a745")
-            }
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#218838")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#28a745")}
           >
             Login with Google
           </button>
