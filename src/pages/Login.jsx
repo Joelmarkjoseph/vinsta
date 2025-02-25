@@ -30,8 +30,8 @@ const Login = () => {
           uid: loggedInUser.uid,
           photoURL: loggedInUser.photoURL,
           createdAt: new Date(),
-          followers: [], // Initialize empty followers list
-          following: [], // Initialize empty following list
+          followers: [],
+          following: [],
         });
       } else {
         // Update `photoURL` if it's missing or changed
@@ -45,6 +45,7 @@ const Login = () => {
         }
       }
 
+      // Navigate to Gallery after successful login
       navigate("/gallery");
     } catch (error) {
       console.error("Login failed:", error.message);
