@@ -20,7 +20,7 @@ const Gallery = () => {
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
-      <h2>📸 Image Gallery</h2>
+      <h2>Gallery</h2>
       <div
         style={{
           display: "grid",

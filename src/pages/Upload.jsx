@@ -1,16 +1,44 @@
 import React, { useState } from "react";
 import { db } from "../firebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { useAuth } from "../AuthContext"; // Import useAuth hook
+import { useAuth } from "../AuthContext";
 
 const Upload = () => {
-  const { user } = useAuth(); // Get logged-in user details
+  const { user } = useAuth();
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [title, setTitle] = useState("");
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
-  const [showTitleInput, setShowTitleInput] = useState(false); // Show title input after selecting an image
+  const [showTitleInput, setShowTitleInput] = useState(false);
+
+  const compressImage = (file, targetSizeKB, callback) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        let scaleFactor = Math.sqrt((targetSizeKB * 1024) / file.size);
+        scaleFactor = Math.min(scaleFactor, 1); // Ensure image is not enlarged
+
+        canvas.width = img.width * scaleFactor;
+        canvas.height = img.height * scaleFactor;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(
+          (blob) => {
+            callback(blob);
+          },
+          "image/jpeg",
+          0.7 // Adjust quality
+        );
+      };
+    };
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -20,21 +48,27 @@ const Upload = () => {
       setMessage("Only image files are allowed.");
       return;
     }
-    if (file.size > 900 * 1024) {
-      setMessage("File size should be less than 900KB.");
-      return;
-    }
 
-    setMessage("");
-    setImage(file);
-    setShowTitleInput(true); // Show title input after image selection
-
-    // Preview the selected image
+    // Preview the image
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
       setPreview(reader.result);
     };
+
+    // Check file size
+    if (file.size > 900 * 1024) {
+      setMessage("Image is too large! Compressing...");
+      compressImage(file, 600, (compressedBlob) => {
+        setImage(compressedBlob);
+        setMessage("Image compressed to 600KB.");
+      });
+    } else {
+      setImage(file);
+      setMessage("");
+    }
+
+    setShowTitleInput(true);
   };
 
   const handleUpload = async () => {
@@ -73,11 +107,11 @@ const Upload = () => {
           userPhoto: user.photoURL,
         });
 
-        setMessage("Image uploaded successfully! \nCheck Gallery");
+        setMessage("Image uploaded successfully! Check Gallery.");
         setImage(null);
         setPreview(null);
         setTitle("");
-        setShowTitleInput(false); // Hide title input after successful upload
+        setShowTitleInput(false);
       } catch (error) {
         setMessage("Error uploading image: " + error.message);
       } finally {
@@ -88,9 +122,9 @@ const Upload = () => {
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
-      <h2>📤 Upload Image</h2>
+      <h2>Upload Image</h2>
       <h3>
-        These pictures is under surveillence of college professors. so be
+        These pictures are under surveillance of college professors, so be
         careful while posting images.
       </h3>
       <h4>Post images related to college and its events only.</h4>
@@ -124,7 +158,7 @@ const Upload = () => {
         onClick={handleUpload}
         disabled={uploading}
         style={{
-          backgroundColor: uploading ? "#6c757d" : "#28a745", // Gray when uploading, Green otherwise
+          backgroundColor: uploading ? "#6c757d" : "#28a745",
           color: "white",
           padding: "12px 20px",
           border: "none",
