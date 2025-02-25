@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
 import { Link } from "react-router-dom"; // Import Link
 import { useNavigate } from "react-router-dom"; // Import useNavigate
@@ -91,10 +91,10 @@ const Gallery = () => {
             <div
               key={image.id}
               style={{
-                border: "1px solid #ddd",
+                // border: "1px solid #ddd",
                 padding: "5px",
                 borderRadius: "10px",
-                boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
+                // boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
                 textAlign: "center",
                 position: "relative",
               }}
@@ -126,7 +126,7 @@ const Gallery = () => {
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                      marginBottom: "10px",
+                      marginBottom: "0px",
                       cursor: "pointer",
                     }}
                   >
@@ -150,7 +150,7 @@ const Gallery = () => {
                           background: "#ccc",
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
+                          // justifyContent: "left",
                           fontSize: "14px",
                         }}
                       >
@@ -162,7 +162,7 @@ const Gallery = () => {
                       <p
                         style={{ fontSize: "12px", color: "#666", margin: "0" }}
                       >
-                        {image.userEmail || "No email"}
+                        {/* {image.userEmail || "No email"} */}
                       </p>
                     </div>
                   </div>
@@ -180,9 +180,6 @@ const Gallery = () => {
                     objectFit: "cover",
                   }}
                 />
-                <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
-                  {image.title || "Untitled"}
-                </h3>
 
                 {showHeart === image.id && (
                   <div
@@ -218,26 +215,21 @@ const Gallery = () => {
                 )}
               </div>
 
-              <p style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}>
-                📅 Uploaded on:{" "}
-                {image.uploadedAt?.seconds
-                  ? new Date(image.uploadedAt.seconds * 1000).toLocaleString()
-                  : "Unknown Date"}
-              </p>
-
               <div
                 onClick={() => handleLike(image.id, image.likedUsers || [])}
                 style={{
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
+                  // justifyContent: "center",
+                  paddingLeft: "10px",
                   fontSize: "20px",
                   gap: "5px",
                   marginTop: "10px",
                 }}
               >
                 <span
+                  align="left"
                   style={{
                     color: image.likedUsers?.includes(user?.uid)
                       ? "#dc3545"
@@ -256,6 +248,34 @@ const Gallery = () => {
                   {image.likedUsers?.length || 0}
                 </span>
               </div>
+              {/* <div
+                style={{
+                  cursor: "pointer",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  // justifyContent: "center",
+                  paddingLeft: "10px",
+                  fontSize: "20px",
+                  gap: "5px",
+                }}
+              > */}
+              <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
+                {image.userName}
+                {image.title || "Untitled"}
+              </h3>
+              <br />
+              <p style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}>
+                {image.uploadedAt?.seconds
+                  ? new Date(
+                      image.uploadedAt.seconds * 1000
+                    ).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : "Unknown Date"}
+              </p>
+              {/* </div> */}
             </div>
           ))
         ) : (
