@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { FaHome, FaUpload, FaImages, FaUser } from "react-icons/fa"; // Import icons
 import "./Navbar.css"; // Import the CSS file
 
 function Navbar() {
@@ -17,32 +18,41 @@ function Navbar() {
         <ul className={`nav-links ${isOpen ? "open" : ""}`}>
           <li>
             <Link to="/" onClick={() => setIsOpen(false)}>
-              Home
+              <FaHome className="nav-icon" /> Home
             </Link>
           </li>
           <li>
             <Link to="/upload" onClick={() => setIsOpen(false)}>
-              Upload
+              <FaUpload className="nav-icon" /> Upload
             </Link>
           </li>
           <li>
             <Link to="/gallery" onClick={() => setIsOpen(false)}>
-              Gallery
+              <FaImages className="nav-icon" /> Gallery
             </Link>
           </li>
           <li>
             <Link to="/dashboard" onClick={() => setIsOpen(false)}>
-              Dashboard
+              <FaUser className="nav-icon" /> Dashboard
             </Link>
           </li>
         </ul>
 
-        {/* Mobile Menu Button */}
-        <div className="nav-toggle" onClick={() => setIsOpen(!isOpen)}>
-          <span className={isOpen ? "bar open" : "bar"}></span>
-          <span className={isOpen ? "bar open" : "bar"}></span>
-          <span className={isOpen ? "bar open" : "bar"}></span>
-        </div>
+        {/* Mobile Icons (Only visible on small screens) */}
+        {/* <div className="mobile-icons">
+          <Link to="/">
+            <FaHome />
+          </Link>
+          <Link to="/upload">
+            <FaUpload />
+          </Link>
+          <Link to="/gallery">
+            <FaImages />
+          </Link>
+          <Link to="/dashboard">
+            <FaUser />
+          </Link>
+        </div> */}
       </div>
     </nav>
   );

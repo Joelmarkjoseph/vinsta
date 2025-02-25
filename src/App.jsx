@@ -16,6 +16,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "../src/pages/AdminRoute";
 import UserDashboard from "./pages/UserDashboard";
 import ProfilePage from "./pages/ProfilePage";
+import BottomNav from "./components/BottomNav";
 
 const PrivateRoute = ({ element }) => {
   const { user } = useAuth(); // Get the authenticated user
@@ -27,6 +28,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Navbar />
+        <BottomNav />
         <h1 style={{ marginTop: "70px", textAlign: "center" }}></h1>
 
         <Routes>

@@ -65,9 +65,12 @@
     margin: 4px;
     transition: 0.3s;
   }
-  
+  .mobile-icons{
+    display: none;
+  }
   /* Mobile Responsive */
   @media screen and (max-width: 768px) {
+  
     .nav-links {
       position: absolute;
       top: 50px;
@@ -104,6 +107,16 @@
   
     .bar.open:nth-child(3) {
       transform: rotate(-45deg) translate(5px, -5px);
+    }
+    .nav-links {
+      display: none;
+    }
+  
+    .mobile-icons {
+      display: flex;
+      width: 100px;
+      justify-content: space-around;
+      margin-right: 20px;
     }
   }
   

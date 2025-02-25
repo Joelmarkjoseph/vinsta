@@ -1,0 +1,34 @@
+.bottom-navbar {
+    z-index: 1000;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #ddd;
+  }
+  
+  .nav-item {
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .icon {
+    font-size: 20px;
+    margin-bottom: 3px;
+  }
+ 
+  @media screen and (min-width: 768px) {
+  .bottom-navbar{
+    display: none;
+  }
+}
