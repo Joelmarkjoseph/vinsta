@@ -107,7 +107,7 @@ const UserDashboard = () => {
               navigate("/upload");
             }}
             style={{
-              backgroundColor: "#ff4444",
+              backgroundColor: "#green",
               color: "white",
               padding: "10px 15px",
               border: "none",
@@ -165,7 +165,7 @@ const UserDashboard = () => {
               navigate("/upload");
             }}
             style={{
-              backgroundColor: "#ff4444",
+              backgroundColor: "#green",
               color: "white",
               padding: "10px 15px",
               border: "none",
