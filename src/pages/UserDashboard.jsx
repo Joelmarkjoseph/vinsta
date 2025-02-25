@@ -103,42 +103,52 @@ const UserDashboard = () => {
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h2>{user?.displayName}</h2>
-      {/* <p>Email: {user?.email}</p> */}
+
       <div
+        className="userdetails"
         style={{
           display: "flex",
+          alignContent: "center",
           justifyContent: "center",
-          gap: "20px",
-          marginTop: "10px",
+          gap: "10px",
         }}
       >
-        <div>
-          <p>{postsCount}</p>
-          <p> Post</p>
-        </div>
-        <div>
-          <p>{followers}</p>
-          <p> Followers</p>
-        </div>
-        <div>
-          <p>{following}</p>
-          <p> Following</p>
+        {/* <p>Email: {user?.email}</p> */}
+        {user?.photoURL && (
+          <img
+            src={user.photoURL}
+            alt="User Profile"
+            style={{
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              objectFit: "cover",
+              marginBottom: "10px",
+            }}
+          />
+        )}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "20px",
+            marginTop: "10px",
+          }}
+        >
+          <div>
+            <p>{postsCount}</p>
+            <p> Post</p>
+          </div>
+          <div>
+            <p>{followers}</p>
+            <p> Followers</p>
+          </div>
+          <div>
+            <p>{following}</p>
+            <p> Following</p>
+          </div>
         </div>
       </div>
-
-      {user?.photoURL && (
-        <img
-          src={user.photoURL}
-          alt="User Profile"
-          style={{
-            width: "100px",
-            height: "100px",
-            borderRadius: "50%",
-            objectFit: "cover",
-            marginBottom: "10px",
-          }}
-        />
-      )}
       <br />
       <button
         onClick={handleLogout}
