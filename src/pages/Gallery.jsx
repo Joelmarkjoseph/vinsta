@@ -50,11 +50,19 @@ const Gallery = () => {
     }
   };
   const goToProfile = (userEmail) => {
+    if (!userEmail || !user) return;
+
+    // Extract email username
     const userEmailWithoutDomain = userEmail.split("@")[0];
 
-    if (!userEmail) return;
-    navigate(`/profile/${encodeURIComponent(userEmailWithoutDomain)}`);
+    // Check if the selected user is the current user
+    if (user.email === userEmail) {
+      navigate("/dashboard"); // Navigate to Dashboard
+    } else {
+      navigate(`/profile/${encodeURIComponent(userEmailWithoutDomain)}`); // Navigate to Profile
+    }
   };
+
   const handleDoubleTap = (imageId, likedUsers) => {
     const userLiked = likedUsers?.includes(user?.uid);
     handleLike(imageId, likedUsers);
@@ -103,11 +111,15 @@ const Gallery = () => {
                 }}
               >
                 {/* User Profile */}
-                <Link
-                  to={`/profile/${encodeURIComponent(
-                    image.userEmail.split("@")[0]
-                  )}`}
-                  style={{ textDecoration: "none", color: "inherit" }}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    marginBottom: "10px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => goToProfile(image.userEmail)}
                 >
                   <div
                     style={{
@@ -154,7 +166,7 @@ const Gallery = () => {
                       </p>
                     </div>
                   </div>
-                </Link>
+                </div>
               </div>
 
               <div style={{ position: "relative" }}>
@@ -163,7 +175,7 @@ const Gallery = () => {
                   alt="Uploaded"
                   style={{
                     width: "100%",
-                    aspectRatio: "1/1",
+                    aspectRatio: "4/5",
                     borderRadius: "5px",
                     objectFit: "cover",
                   }}

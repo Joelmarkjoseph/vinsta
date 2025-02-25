@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Import navigate
 import { db } from "../firebaseConfig";
 import {
   collection,
@@ -16,7 +16,10 @@ import { useAuth } from "../AuthContext"; // Ensure correct path
 
 const Profile = () => {
   const { email } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth(); // Get the logged-in user
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false); // Fixed loading state
   const [userData, setUserData] = useState(null);
   const [postsCount, setPostsCount] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -48,7 +51,7 @@ const Profile = () => {
       try {
         const imagesQuery = query(
           collection(db, "images"),
-          where("email", "==", `${email}@gmail.com`)
+          where("userEmail", "==", `${email}@gmail.com`) // Filter by profile user
         );
         const imagesSnapshot = await getDocs(imagesQuery);
         setPostsCount(imagesSnapshot.size);
@@ -58,27 +61,54 @@ const Profile = () => {
     };
 
     const checkFollowingStatus = async () => {
-      if (!user) return;
+      if (!user || !profileUserId) return;
 
-      const currentUserRef = doc(db, "users", user.uid);
-      const currentUserSnap = await getDoc(currentUserRef);
+      try {
+        const profileUserRef = doc(db, "users", profileUserId);
+        const profileUserSnap = await getDoc(profileUserRef);
 
-      if (currentUserSnap.exists()) {
-        const currentUserData = currentUserSnap.data();
-        setIsFollowing(
-          currentUserData.following?.includes(`${email}@gmail.com`)
-        );
-        console.log(
-          "Is following:",
-          currentUserData.following?.includes(`${email}@gmail.com`)
-        );
+        if (profileUserSnap.exists()) {
+          const profileUserData = profileUserSnap.data();
+          setIsFollowing(
+            profileUserData.followers?.includes(user.email) || false
+          );
+          console.log(
+            "Following status:",
+            profileUserData.followers?.includes(user.email)
+          );
+        }
+      } catch (error) {
+        console.error("Error checking follow status:", error);
       }
     };
 
     fetchUserByEmail();
     fetchPostsCount();
     checkFollowingStatus();
-  }, [email, user]);
+  }, [email, user, profileUserId]);
+
+  const fetchUserImages = async () => {
+    setLoading(true);
+    try {
+      const q = query(
+        collection(db, "images"),
+        where("userEmail", "==", `${email}@gmail.com`) // Fetch images of profile user
+      );
+      const querySnapshot = await getDocs(q);
+      const userImages = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setImages(userImages);
+    } catch (error) {
+      console.error("Error fetching user images:", error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (email) fetchUserImages();
+  }, [email]);
 
   const handleFollowToggle = async () => {
     if (!user || !profileUserId) return;
@@ -122,8 +152,6 @@ const Profile = () => {
           objectFit: "cover",
         }}
       />
-      <p>Email: {userData.email}</p>
-      <p>Bio: {userData.bio || "No bio available."}</p>
 
       <div
         style={{
@@ -164,6 +192,46 @@ const Profile = () => {
         >
           {isFollowing ? "Unfollow" : "Follow"}
         </button>
+      )}
+      <h3>Posts</h3>
+      {loading ? (
+        <p>Loading images...</p>
+      ) : images.length > 0 ? (
+        <div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: "10px",
+            }}
+          >
+            {images.map((image) => (
+              <div
+                key={image.id}
+                style={{ border: "1px solid #ccc", padding: "10px" }}
+              >
+                <img
+                  src={image.imageBase64}
+                  alt="Uploaded"
+                  style={{
+                    width: "100%",
+                    aspectRatio: "4/5",
+                    borderRadius: "5px",
+                    objectFit: "cover",
+                  }}
+                />
+                <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
+                  {image.title || "Untitled"}
+                </h3>
+                {/* <p>
+                  {new Date(image.uploadedAt?.seconds * 1000).toLocaleString()}
+                </p> */}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p>No images uploaded yet.</p>
       )}
     </div>
   );

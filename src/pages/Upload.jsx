@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { db } from "../firebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "../AuthContext";
+import { doc, updateDoc, getDoc, increment } from "firebase/firestore";
 
 const Upload = () => {
   const { user } = useAuth();
@@ -98,6 +99,7 @@ const Upload = () => {
       const base64String = reader.result;
 
       try {
+        // Upload image to Firestore
         await addDoc(collection(db, "images"), {
           title: title.trim(),
           imageBase64: base64String,
@@ -106,6 +108,19 @@ const Upload = () => {
           userName: user.displayName,
           userPhoto: user.photoURL,
         });
+
+        // Update user's post count
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          await updateDoc(userRef, {
+            postCount: increment(1),
+          });
+        } else {
+          // If user document doesn't exist, create one
+          await setDoc(userRef, { postCount: 1 }, { merge: true });
+        }
 
         setMessage("Image uploaded successfully! Check Gallery.");
         setImage(null);

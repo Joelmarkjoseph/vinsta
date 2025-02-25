@@ -21,6 +21,8 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
+  const [postsCount, setPostsCount] = useState(0);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,6 +32,21 @@ const UserDashboard = () => {
     }
   }, [user]);
 
+  const fetchPostsCount = async () => {
+    if (!user) return;
+
+    try {
+      const imagesQuery = query(
+        collection(db, "images"), // Fetch from "images" collection
+        where("userEmail", "==", user.email) // Filter by logged-in user
+      );
+      const imagesSnapshot = await getDocs(imagesQuery);
+
+      setPostsCount(imagesSnapshot.size); // Get count of documents
+    } catch (error) {
+      console.error("Error fetching posts count:", error);
+    }
+  };
   const fetchUserImages = async () => {
     setLoading(true);
     try {
@@ -81,14 +98,33 @@ const UserDashboard = () => {
       console.error("Error logging out:", error);
     }
   };
+  fetchPostsCount();
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
-      <h2>Welcome, {user?.displayName}</h2>
-      <p>Email: {user?.email}</p>
-      <p>
-        Followers: {followers} | Following: {following}
-      </p>
+      <h2>{user?.displayName}</h2>
+      {/* <p>Email: {user?.email}</p> */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "20px",
+          marginTop: "10px",
+        }}
+      >
+        <div>
+          <p>{postsCount}</p>
+          <p> Post</p>
+        </div>
+        <div>
+          <p>{followers}</p>
+          <p> Followers</p>
+        </div>
+        <div>
+          <p>{following}</p>
+          <p> Following</p>
+        </div>
+      </div>
 
       {user?.photoURL && (
         <img
@@ -152,11 +188,21 @@ const UserDashboard = () => {
                 key={image.id}
                 style={{ border: "1px solid #ccc", padding: "10px" }}
               >
-                <img
+                {/* <img
                   src={image.imageBase64}
                   alt="Uploaded"
                   width="50%"
                   height="auto"
+                /> */}
+                <img
+                  src={image.imageBase64}
+                  alt="Uploaded"
+                  style={{
+                    width: "100%",
+                    aspectRatio: "4/5",
+                    borderRadius: "5px",
+                    objectFit: "cover",
+                  }}
                 />
                 <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
                   {image.title || "Untitled"}
