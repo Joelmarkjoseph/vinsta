@@ -13,7 +13,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       await signInWithPopup(auth, provider);
-      navigate("/dashboard"); // Redirect after login
+      navigate("/gallery"); // Redirect after login
     } catch (error) {
       console.error("Login failed:", error.message);
     }

@@ -1,9 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
+import { useAuth } from "../AuthContext";
 
 const Gallery = () => {
+  const { user } = useAuth();
   const [images, setImages] = useState([]);
+  const [showHeart, setShowHeart] = useState(null);
+  const [showBrokenHeart, setShowBrokenHeart] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, "images"), orderBy("uploadedAt", "desc"));
@@ -18,9 +31,37 @@ const Gallery = () => {
     return () => unsubscribe(); // Cleanup subscription on unmount
   }, []);
 
+  const handleLike = async (imageId, likedUsers) => {
+    if (!user) return alert("You must be logged in to like an image.");
+
+    const imageRef = doc(db, "images", imageId);
+    const userLiked = likedUsers?.includes(user.uid);
+
+    try {
+      await updateDoc(imageRef, {
+        likedUsers: userLiked ? arrayRemove(user.uid) : arrayUnion(user.uid),
+      });
+    } catch (error) {
+      console.error("Error updating likes: ", error);
+    }
+  };
+
+  const handleDoubleTap = (imageId, likedUsers) => {
+    const userLiked = likedUsers?.includes(user?.uid);
+    handleLike(imageId, likedUsers);
+
+    if (userLiked) {
+      setShowBrokenHeart(imageId);
+      setTimeout(() => setShowBrokenHeart(null), 1000);
+    } else {
+      setShowHeart(imageId);
+      setTimeout(() => setShowHeart(null), 1000);
+    }
+  };
+
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
-      <h2>Gallery</h2>
+      {/* <h2>Gallery</h2> */}
       <div
         style={{
           display: "grid",
@@ -38,9 +79,12 @@ const Gallery = () => {
                 borderRadius: "10px",
                 boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
                 textAlign: "center",
+                position: "relative",
               }}
+              onDoubleClick={() =>
+                handleDoubleTap(image.id, image.likedUsers || [])
+              }
             >
-              {/* Display User Info */}
               <div
                 style={{
                   display: "flex",
@@ -84,35 +128,107 @@ const Gallery = () => {
                 </div>
               </div>
 
-              {/* Image Title */}
-              <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
-                {image.title || "Untitled"}
-              </h3>
+              <div style={{ position: "relative" }}>
+                <img
+                  src={image.imageBase64}
+                  alt="Uploaded"
+                  style={{
+                    width: "100%",
+                    aspectRatio: "1/1",
+                    borderRadius: "5px",
+                    objectFit: "cover",
+                  }}
+                />
+                <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
+                  {image.title || "Untitled"}
+                </h3>
 
-              {/* Uploaded Image */}
-              <img
-                src={image.imageBase64}
-                alt="Uploaded"
-                style={{
-                  width: "100%",
-                  borderRadius: "5px",
-                  objectFit: "cover",
-                }}
-              />
+                {showHeart === image.id && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%) scale(1)",
+                      fontSize: "50px",
+                      color: "#dc3545",
+                      opacity: "0.8",
+                      animation: "growFade 1s forwards",
+                    }}
+                  >
+                    ❤️
+                  </div>
+                )}
+                {showBrokenHeart === image.id && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%) scale(1)",
+                      fontSize: "50px",
+                      color: "#dc3545",
+                      opacity: "0.8",
+                      animation: "growFade 1s forwards",
+                    }}
+                  >
+                    💔
+                  </div>
+                )}
+              </div>
 
-              {/* Timestamp */}
               <p style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}>
                 📅 Uploaded on:{" "}
                 {image.uploadedAt?.seconds
                   ? new Date(image.uploadedAt.seconds * 1000).toLocaleString()
                   : "Unknown Date"}
               </p>
+
+              <div
+                onClick={() => handleLike(image.id, image.likedUsers || [])}
+                style={{
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "20px",
+                  gap: "5px",
+                  marginTop: "10px",
+                }}
+              >
+                <span
+                  style={{
+                    color: image.likedUsers?.includes(user?.uid)
+                      ? "#dc3545"
+                      : "#aaa",
+                  }}
+                >
+                  {image.likedUsers?.includes(user?.uid) ? "❤️" : "🤍"}
+                </span>
+                <span
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    color: "#333",
+                  }}
+                >
+                  {image.likedUsers?.length || 0}
+                </span>
+              </div>
             </div>
           ))
         ) : (
           <p>No images uploaded yet.</p>
         )}
       </div>
+      <style>
+        {`
+          @keyframes growFade {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+          }
+        `}
+      </style>
     </div>
   );
 };
