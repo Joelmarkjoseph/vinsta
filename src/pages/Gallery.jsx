@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
 import { Link } from "react-router-dom"; // Import Link
 import { useNavigate } from "react-router-dom"; // Import useNavigate
@@ -49,17 +49,16 @@ const Gallery = () => {
       console.error("Error updating likes: ", error);
     }
   };
+
   const goToProfile = (userEmail) => {
     if (!userEmail || !user) return;
 
-    // Extract email username
     const userEmailWithoutDomain = userEmail.split("@")[0];
 
-    // Check if the selected user is the current user
     if (user.email === userEmail) {
-      navigate("/dashboard"); // Navigate to Dashboard
+      navigate("/dashboard");
     } else {
-      navigate(`/profile/${encodeURIComponent(userEmailWithoutDomain)}`); // Navigate to Profile
+      navigate(`/profile/${encodeURIComponent(userEmailWithoutDomain)}`);
     }
   };
 
@@ -78,7 +77,6 @@ const Gallery = () => {
 
   return (
     <div style={{ textAlign: "center", padding: "5px" }}>
-      {/* <h2>Gallery</h2> */}
       <div
         style={{
           display: "grid",
@@ -91,10 +89,8 @@ const Gallery = () => {
             <div
               key={image.id}
               style={{
-                // border: "1px solid #ddd",
                 padding: "5px",
                 borderRadius: "10px",
-                // boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
                 textAlign: "center",
                 position: "relative",
               }}
@@ -108,64 +104,38 @@ const Gallery = () => {
                   alignItems: "center",
                   gap: "10px",
                   marginBottom: "10px",
+                  cursor: "pointer",
                 }}
+                onClick={() => goToProfile(image.userEmail)}
               >
-                {/* User Profile */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    marginBottom: "10px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => goToProfile(image.userEmail)}
-                >
+                {image.userPhoto ? (
+                  <img
+                    src={image.userPhoto}
+                    alt="User"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
                   <div
                     style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      background: "#ccc",
                       display: "flex",
                       alignItems: "center",
-                      gap: "10px",
-                      marginBottom: "0px",
-                      cursor: "pointer",
+                      fontSize: "14px",
                     }}
                   >
-                    {image.userPhoto ? (
-                      <img
-                        src={image.userPhoto}
-                        alt="User"
-                        style={{
-                          width: "40px",
-                          height: "40px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          width: "40px",
-                          height: "40px",
-                          borderRadius: "50%",
-                          background: "#ccc",
-                          display: "flex",
-                          alignItems: "center",
-                          // justifyContent: "left",
-                          fontSize: "14px",
-                        }}
-                      >
-                        ?
-                      </div>
-                    )}
-                    <div style={{ textAlign: "left" }}>
-                      <strong>{image.userName || "Unknown User"}</strong>
-                      <p
-                        style={{ fontSize: "12px", color: "#666", margin: "0" }}
-                      >
-                        {/* {image.userEmail || "No email"} */}
-                      </p>
-                    </div>
+                    ?
                   </div>
+                )}
+                <div style={{ textAlign: "left" }}>
+                  <strong>{image.userName || "Unknown User"}</strong>
                 </div>
               </div>
 
@@ -180,7 +150,6 @@ const Gallery = () => {
                     objectFit: "cover",
                   }}
                 />
-
                 {showHeart === image.id && (
                   <div
                     style={{
@@ -221,7 +190,6 @@ const Gallery = () => {
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  // justifyContent: "center",
                   paddingLeft: "10px",
                   fontSize: "20px",
                   gap: "5px",
@@ -229,7 +197,6 @@ const Gallery = () => {
                 }}
               >
                 <span
-                  align="left"
                   style={{
                     color: image.likedUsers?.includes(user?.uid)
                       ? "#dc3545"
@@ -248,24 +215,24 @@ const Gallery = () => {
                   {image.likedUsers?.length || 0}
                 </span>
               </div>
-              {/* <div
+              <p
                 style={{
-                  cursor: "pointer",
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  // justifyContent: "center",
-                  paddingLeft: "10px",
-                  fontSize: "20px",
-                  gap: "5px",
+                  fontSize: "14px",
+                  marginBottom: "5px",
+                  textAlign: "left",
                 }}
-              > */}
-              <h3 style={{ fontSize: "14px", marginBottom: "5px" }}>
-                {image.userName}
-                {image.title || "Untitled"}
-              </h3>
-              <br />
-              <p style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}>
+              >
+                <strong>{image.userName}</strong> {image.title || "Untitled"}
+              </p>
+
+              <p
+                style={{
+                  fontSize: "12px",
+                  color: "#666",
+                  marginTop: "10px",
+                  textAlign: "left",
+                }}
+              >
                 {image.uploadedAt?.seconds
                   ? new Date(
                       image.uploadedAt.seconds * 1000
@@ -275,21 +242,12 @@ const Gallery = () => {
                     })
                   : "Unknown Date"}
               </p>
-              {/* </div> */}
             </div>
           ))
         ) : (
           <p>No images uploaded yet.</p>
         )}
       </div>
-      <style>
-        {`
-          @keyframes growFade {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
-          }
-        `}
-      </style>
     </div>
   );
 };
