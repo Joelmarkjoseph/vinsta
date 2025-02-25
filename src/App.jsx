@@ -1,16 +1,26 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Upload from "./pages/Upload";
 import ImageDetail from "./pages/ImageDetail";
 import Navbar from "./components/Navbar";
 import Gallery from "./pages/Gallery";
 import Login from "./pages/Login";
-import AdminLogin from "./pages/AdminLogin"; // Import Admin Login Page
-import AdminDashboard from "./pages/AdminDashboard"; // Create this page separately
-import { AuthProvider } from "../src/AuthContext";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import { AuthProvider, useAuth } from "../src/AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "../src/pages/AdminRoute";
 import UserDashboard from "./pages/UserDashboard";
 import ProfilePage from "./pages/ProfilePage";
+
+const PrivateRoute = ({ element }) => {
+  const { user } = useAuth(); // Get the authenticated user
+  return user ? element : <Navigate to="/login" replace />;
+};
 
 function App() {
   return (
@@ -20,7 +30,13 @@ function App() {
         <h1 style={{ marginTop: "70px", textAlign: "center" }}></h1>
 
         <Routes>
-          <Route path="/" element={<Login />} />
+          {/* Redirect root ("/") based on authentication */}
+          <Route
+            path="/"
+            element={<PrivateRoute element={<Navigate to="/gallery" />} />}
+          />
+
+          {/* Authentication Pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/admin-login" element={<AdminLogin />} />
 

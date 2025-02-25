@@ -1,10 +1,10 @@
-import React from "react";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../src/AuthContext";
 import { db } from "../firebaseConfig";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 
 const Login = () => {
   const auth = getAuth(app);
@@ -51,7 +51,11 @@ const Login = () => {
       console.error("Login failed:", error.message);
     }
   };
-
+  useEffect(() => {
+    if (user) {
+      navigate("/gallery");
+    }
+  }, [user, navigate]);
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h1>Welcome to Vinsta</h1>

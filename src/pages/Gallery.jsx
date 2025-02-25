@@ -77,7 +77,7 @@ const Gallery = () => {
   };
 
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
+    <div style={{ textAlign: "center", padding: "5px" }}>
       {/* <h2>Gallery</h2> */}
       <div
         style={{
@@ -92,7 +92,7 @@ const Gallery = () => {
               key={image.id}
               style={{
                 border: "1px solid #ddd",
-                padding: "15px",
+                padding: "5px",
                 borderRadius: "10px",
                 boxShadow: "2px 2px 10px rgba(0,0,0,0.1)",
                 textAlign: "center",
