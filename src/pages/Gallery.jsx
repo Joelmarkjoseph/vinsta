@@ -146,7 +146,7 @@ const Gallery = () => {
                   style={{
                     width: "100%",
                     aspectRatio: "4/5",
-                    borderRadius: "5px",
+                    borderRadius: "0px",
                     objectFit: "cover",
                   }}
                 />
