@@ -137,7 +137,7 @@ const UserDashboard = () => {
         >
           <div>
             <p>{postsCount}</p>
-            <p> Post</p>
+            <p> Posts</p>
           </div>
           <div>
             <p>{followers}</p>
