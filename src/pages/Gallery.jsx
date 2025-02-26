@@ -163,7 +163,7 @@ const Gallery = () => {
                       animation: "growFade 1s forwards",
                     }}
                   >
-                    ❤️
+                    ⭐
                   </div>
                 )}
                 {showBrokenHeart === image.id && (
@@ -178,9 +178,7 @@ const Gallery = () => {
                       opacity: "0.8",
                       animation: "growFade 1s forwards",
                     }}
-                  >
-                    💔
-                  </div>
+                  ></div>
                 )}
               </div>
 
@@ -203,7 +201,7 @@ const Gallery = () => {
                       : "#aaa",
                   }}
                 >
-                  {image.likedUsers?.includes(user?.uid) ? "❤️" : "🤍"}
+                  {image.likedUsers?.includes(user?.uid) ? "⭐" : "🤍"}
                 </span>
                 <span
                   style={{
