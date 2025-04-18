@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaHome, FaUpload, FaImages, FaUser } from "react-icons/fa"; // Import icons
+import {
+  FaHome,
+  FaUpload,
+  FaImages,
+  FaUser,
+  FaSearch,
+  FaComment,
+} from "react-icons/fa"; // Import icons
 import "./Navbar.css"; // Import the CSS file
 
 function Navbar() {
@@ -26,14 +33,15 @@ function Navbar() {
               <FaUpload className="nav-icon" /> Upload
             </Link>
           </li>
-          {/* <li>
-            <Link to="/gallery" onClick={() => setIsOpen(false)}>
-              <FaImages className="nav-icon" /> Gallery
+          <li>
+            <Link to="/search" onClick={() => setIsOpen(false)}>
+              <FaSearch className="nav-icon" /> Search
             </Link>
-          </li> */}
+          </li>
           <li>
             <Link to="/chat" onClick={() => setIsOpen(false)}>
-              💬Chat
+              <FaComment className="icon" />
+              Chat
             </Link>
           </li>
           <li>

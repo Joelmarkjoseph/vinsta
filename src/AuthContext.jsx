@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      if (currentUser?.email === "admin@vits.com") {
+      if (currentUser?.email === "admin@vta.com") {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);

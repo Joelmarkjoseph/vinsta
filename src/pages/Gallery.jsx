@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
 import { Link } from "react-router-dom"; // Import Link
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-
+import "../App.css";
+import Search from "../components/Search";
 import {
   collection,
   query,
@@ -161,11 +162,13 @@ const Gallery = () => {
                       color: "#dc3545",
                       opacity: "0.8",
                       animation: "growFade 1s forwards",
+                      pointerEvents: "none",
                     }}
                   >
-                    ⭐
+                    ❤️
                   </div>
                 )}
+
                 {showBrokenHeart === image.id && (
                   <div
                     style={{
@@ -201,7 +204,7 @@ const Gallery = () => {
                       : "#aaa",
                   }}
                 >
-                  {image.likedUsers?.includes(user?.uid) ? "⭐" : "🤍"}
+                  {image.likedUsers?.includes(user?.uid) ? "❤️" : "🤍"}
                 </span>
                 <span
                   style={{

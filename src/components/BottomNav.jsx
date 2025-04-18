@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
-import { FaHome, FaUpload, FaImages, FaUser } from "react-icons/fa";
+import {
+  FaHome,
+  FaUpload,
+  FaImages,
+  FaUser,
+  FaSearch,
+  FaComment,
+} from "react-icons/fa";
 import "./BottomNav.css";
 
 function BottomNav() {
@@ -14,12 +21,12 @@ function BottomNav() {
         <span>Upload</span>
       </Link>
 
-      {/* <Link to="/gallery" className="nav-item">
-        <FaImages className="icon" />
-        <span>Gallery</span>
-      </Link> */}
+      <Link to="/search" className="nav-item">
+        <FaSearch className="icon" />
+        <span>Search</span>
+      </Link>
       <Link to="/chat" className="nav-item">
-        💬
+        <FaComment className="icon" />
         <span>Chat</span>
       </Link>
       <Link to="/dashboard" className="nav-item">

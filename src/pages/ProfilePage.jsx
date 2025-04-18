@@ -122,14 +122,30 @@ const Profile = () => {
         await updateDoc(currentUserRef, {
           following: arrayRemove(`${email}@gmail.com`),
         });
-        await updateDoc(profileUserRef, { followers: arrayRemove(user.email) });
+        await updateDoc(profileUserRef, {
+          followers: arrayRemove(user.email),
+        });
+
+        // Update UI instantly
+        setUserData((prev) => ({
+          ...prev,
+          followers: prev.followers?.filter((f) => f !== user.email),
+        }));
         setIsFollowing(false);
       } else {
         // Follow user
         await updateDoc(currentUserRef, {
           following: arrayUnion(`${email}@gmail.com`),
         });
-        await updateDoc(profileUserRef, { followers: arrayUnion(user.email) });
+        await updateDoc(profileUserRef, {
+          followers: arrayUnion(user.email),
+        });
+
+        // Update UI instantly
+        setUserData((prev) => ({
+          ...prev,
+          followers: [...(prev.followers || []), user.email],
+        }));
         setIsFollowing(true);
       }
     } catch (error) {
@@ -143,7 +159,7 @@ const Profile = () => {
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h2>{userData.name || "User Profile"}</h2>
       <img
-        src={userData.photoURL || "default-profile.png"}
+        src={userData.photoURL || "depic.jpeg"}
         alt="User"
         style={{
           width: "100px",

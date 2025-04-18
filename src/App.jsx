@@ -19,6 +19,8 @@ import AdminRoute from "./pages/AdminRoute";
 import UserDashboard from "./pages/UserDashboard";
 import ProfilePage from "./pages/ProfilePage";
 import BottomNav from "./components/BottomNav";
+import Profile from "./pages/Profile";
+import Searchpage from "./pages/Searchpage";
 
 const PrivateRoute = ({ element }) => {
   const { user } = useAuth();
@@ -78,6 +80,14 @@ function App() {
               }
             />
             <Route
+              path="/search"
+              element={
+                <ProtectedRoute>
+                  <Searchpage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/chat"
               element={
                 <ProtectedRoute>
@@ -101,6 +111,15 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/profile/:id"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/admin-dashboard"
               element={
