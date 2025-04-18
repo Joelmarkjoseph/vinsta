@@ -18,7 +18,7 @@ function BottomNav() {
         <FaImages className="icon" />
         <span>Gallery</span>
       </Link>
-      <Link to="/upload" className="nav-item">
+      <Link to="/chat" className="nav-item">
         💬
         <span>Chat</span>
       </Link>
