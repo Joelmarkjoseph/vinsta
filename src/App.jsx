@@ -4,6 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import OpenChat from "./pages/OpenChat";
 import Upload from "./pages/Upload";
 import ImageDetail from "./pages/ImageDetail";
 import Navbar from "./components/Navbar";
@@ -13,13 +14,14 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import { AuthProvider, useAuth } from "../src/AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
-import AdminRoute from "../src/pages/AdminRoute";
+import AdminRoute from "./pages/AdminRoute";
 import UserDashboard from "./pages/UserDashboard";
 import ProfilePage from "./pages/ProfilePage";
 import BottomNav from "./components/BottomNav";
 
+// Route wrapper to handle basic auth protection
 const PrivateRoute = ({ element }) => {
-  const { user } = useAuth(); // Get the authenticated user
+  const { user } = useAuth();
   return user ? element : <Navigate to="/login" replace />;
 };
 
@@ -32,17 +34,17 @@ function App() {
         <h1 style={{ marginTop: "70px", textAlign: "center" }}></h1>
 
         <Routes>
-          {/* Redirect root ("/") based on authentication */}
+          {/* Redirect root to gallery if logged in */}
           <Route
             path="/"
             element={<PrivateRoute element={<Navigate to="/gallery" />} />}
           />
 
-          {/* Authentication Pages */}
+          {/* Auth Pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/admin-login" element={<AdminLogin />} />
 
-          {/* Protected Routes for Users */}
+          {/* User Protected Routes */}
           <Route
             path="/upload"
             element={
@@ -68,6 +70,14 @@ function App() {
             }
           />
           <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <OpenChat />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/image/:id"
             element={
               <ProtectedRoute>
@@ -84,7 +94,7 @@ function App() {
             }
           />
 
-          {/* Admin Routes */}
+          {/* Admin Protected Route */}
           <Route
             path="/admin-dashboard"
             element={

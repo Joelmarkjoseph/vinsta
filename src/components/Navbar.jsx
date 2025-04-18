@@ -32,6 +32,11 @@ function Navbar() {
             </Link>
           </li>
           <li>
+            <Link to="/chat" onClick={() => setIsOpen(false)}>
+              💬Chat
+            </Link>
+          </li>
+          <li>
             <Link to="/dashboard" onClick={() => setIsOpen(false)}>
               <FaUser className="nav-icon" /> Dashboard
             </Link>

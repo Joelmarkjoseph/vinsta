@@ -13,9 +13,14 @@ function BottomNav() {
         <FaUpload className="icon" />
         <span>Upload</span>
       </Link>
+
       <Link to="/gallery" className="nav-item">
         <FaImages className="icon" />
         <span>Gallery</span>
+      </Link>
+      <Link to="/upload" className="nav-item">
+        💬
+        <span>Chat</span>
       </Link>
       <Link to="/dashboard" className="nav-item">
         <FaUser className="icon" />
