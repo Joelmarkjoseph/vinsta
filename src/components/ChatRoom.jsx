@@ -16,7 +16,7 @@ const ChatRoom = () => {
   const [input, setInput] = useState("");
   const auth = getAuth();
   const user = auth.currentUser;
-  const bottomRef = useRef(null); // 👈 Create ref
+  const bottomRef = useRef(null);
 
   const messagesRef = collection(db, "messages");
 
@@ -30,7 +30,6 @@ const ChatRoom = () => {
     return () => unsubscribe();
   }, []);
 
-  // 👇 Auto-scroll when messages update
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -52,20 +51,31 @@ const ChatRoom = () => {
   return (
     <div className="chat-room-container">
       <div className="chat-messages">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`chat-message ${
-              user && msg.name === (user.displayName || user.email)
-                ? "sent"
-                : "received"
-            }`}
-          >
-            <span className="sender">{msg.name}</span>
-            <p className="text">{msg.text}</p>
-          </div>
-        ))}
-        <div ref={bottomRef} /> {/* 👈 Invisible div to scroll into view */}
+        {messages.map((msg) => {
+          const time = msg.createdAt?.toDate
+            ? msg.createdAt.toDate().toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              })
+            : "";
+
+          const isSent = user && msg.name === (user.displayName || user.email);
+
+          return (
+            <div
+              key={msg.id}
+              className={`chat-message ${isSent ? "sent" : "received"}`}
+            >
+              <div className="message-bubble">
+                {!isSent && <span className="sender-name">{msg.name}</span>}
+                <p className="text">{msg.text}</p>
+                <span className="timestamp">{time}</span>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={bottomRef} />
       </div>
       <form onSubmit={sendMessage} className="chat-form">
         <input
