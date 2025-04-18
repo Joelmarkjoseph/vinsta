@@ -10,7 +10,7 @@ import {
 import { db } from "../firebaseConfig";
 import { getAuth } from "firebase/auth";
 import "./ChatRoom.css";
-
+import { FaTelegramPlane } from "react-icons/fa";
 const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -85,7 +85,9 @@ const ChatRoom = () => {
           placeholder="Type a message..."
         />
         <button className="chat-send-button" type="submit">
-          Send
+          &nbsp;
+          <FaTelegramPlane style={{ fontSize: "20px" }} /> &nbsp;
+          {/* Send */}
         </button>
       </form>
     </div>
