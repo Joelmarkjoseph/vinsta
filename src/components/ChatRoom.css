@@ -73,7 +73,7 @@
   margin-left: 10px;
   padding: 10px 15px;
   border: none;
-  background-color: #0eb844;
+  background-color: #075e23;
   color: white;
   border-radius: 20px;
   cursor: pointer;
@@ -100,4 +100,14 @@
   color: #075e54;
   margin-bottom: 2px;
   display: block;
+}
+.date-separator {
+  text-align: center;
+  margin: 15px auto;
+  padding: 6px 12px;
+  background-color: #e1f3ff;
+  color: #333;
+  font-size: 0.85rem;
+  border-radius: 15px;
+  width: fit-content;
 }

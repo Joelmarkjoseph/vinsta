@@ -26,11 +26,11 @@ function Navbar() {
               <FaUpload className="nav-icon" /> Upload
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/gallery" onClick={() => setIsOpen(false)}>
               <FaImages className="nav-icon" /> Gallery
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link to="/chat" onClick={() => setIsOpen(false)}>
               💬Chat

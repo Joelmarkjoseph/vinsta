@@ -14,10 +14,10 @@ function BottomNav() {
         <span>Upload</span>
       </Link>
 
-      <Link to="/gallery" className="nav-item">
+      {/* <Link to="/gallery" className="nav-item">
         <FaImages className="icon" />
         <span>Gallery</span>
-      </Link>
+      </Link> */}
       <Link to="/chat" className="nav-item">
         💬
         <span>Chat</span>
