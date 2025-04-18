@@ -78,6 +78,7 @@ const Gallery = () => {
 
   return (
     <div style={{ textAlign: "center", padding: "5px" }}>
+      <br />
       <div
         style={{
           display: "grid",
