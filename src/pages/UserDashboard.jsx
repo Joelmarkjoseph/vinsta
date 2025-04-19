@@ -23,6 +23,10 @@ const UserDashboard = () => {
   const [displayName, setDisplayName] = useState("");
   const [profilePicUrl, setProfilePicUrl] = useState("");
 
+  const [showFollowModal, setShowFollowModal] = useState(false);
+  const [followList, setFollowList] = useState([]);
+  const [modalType, setModalType] = useState(""); // 'followers' or 'following'
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,7 +45,7 @@ const UserDashboard = () => {
       if (userSnap.exists()) {
         const userData = userSnap.data();
         setDisplayName(userData.name || "No Name");
-        setProfilePicUrl(userData.photoURL || ""); // You can set a fallback image here
+        setProfilePicUrl(userData.photoURL || "");
       }
     } catch (error) {
       console.error("Error loading user profile:", error);
@@ -92,6 +96,23 @@ const UserDashboard = () => {
       }
     } catch (error) {
       console.error("Error fetching follow data:", error);
+    }
+  };
+
+  const fetchFollowList = async (type) => {
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        const list =
+          type === "followers" ? data.followers || [] : data.following || [];
+        setFollowList(list);
+        setModalType(type);
+        setShowFollowModal(true);
+      }
+    } catch (error) {
+      console.error("Error fetching follow list:", error);
     }
   };
 
@@ -152,16 +173,23 @@ const UserDashboard = () => {
             <p>{postsCount}</p>
             <p>Posts</p>
           </div>
-          <div>
+          <div
+            onClick={() => fetchFollowList("followers")}
+            style={{ cursor: "pointer" }}
+          >
             <p>{followers}</p>
             <p>Followers</p>
           </div>
-          <div>
+          <div
+            onClick={() => fetchFollowList("following")}
+            style={{ cursor: "pointer" }}
+          >
             <p>{following}</p>
             <p>Following</p>
           </div>
         </div>
       </div>
+
       <br />
       <button
         onClick={handleLogout}
@@ -261,6 +289,65 @@ const UserDashboard = () => {
           >
             Upload Image
           </button>
+        </div>
+      )}
+
+      {/* Modal for followers/following */}
+      {showFollowModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 999,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              padding: "20px",
+              borderRadius: "10px",
+              maxWidth: "400px",
+              width: "90%",
+              maxHeight: "70vh",
+              overflowY: "auto",
+              position: "relative",
+            }}
+          >
+            <h3>{modalType === "followers" ? "Followers" : "Following"}</h3>
+            <button
+              onClick={() => setShowFollowModal(false)}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                backgroundColor: "#ccc",
+                border: "none",
+                borderRadius: "50%",
+                padding: "5px",
+                cursor: "pointer",
+              }}
+            >
+              ❌
+            </button>
+            <ul style={{ textAlign: "left", marginTop: "30px" }}>
+              {followList.length > 0 ? (
+                followList.map((uid, index) => (
+                  <li key={index} style={{ marginBottom: "10px" }}>
+                    {uid}
+                  </li>
+                ))
+              ) : (
+                <p>No users found</p>
+              )}
+            </ul>
+          </div>
         </div>
       )}
     </div>
