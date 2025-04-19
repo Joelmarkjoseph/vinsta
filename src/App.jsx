@@ -21,6 +21,7 @@ import ProfilePage from "./pages/ProfilePage";
 import BottomNav from "./components/BottomNav";
 import Profile from "./pages/Profile";
 import Searchpage from "./pages/Searchpage";
+import EditProfile from "./pages/EditProfile";
 
 const PrivateRoute = ({ element }) => {
   const { user } = useAuth();
@@ -84,6 +85,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Searchpage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editp"
+              element={
+                <ProtectedRoute>
+                  <EditProfile />
                 </ProtectedRoute>
               }
             />

@@ -8,9 +8,7 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  updateDoc,
   getDoc,
-  setDoc,
 } from "firebase/firestore";
 import { useAuth } from "../AuthContext";
 import { getAuth, signOut } from "firebase/auth";
@@ -22,6 +20,8 @@ const UserDashboard = () => {
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
   const [postsCount, setPostsCount] = useState(0);
+  const [displayName, setDisplayName] = useState("");
+  const [profilePicUrl, setProfilePicUrl] = useState("");
 
   const navigate = useNavigate();
 
@@ -29,24 +29,39 @@ const UserDashboard = () => {
     if (user) {
       fetchUserImages();
       fetchFollowData();
+      fetchPostsCount();
+      loadUserProfile();
     }
   }, [user]);
 
+  const loadUserProfile = async () => {
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        setDisplayName(userData.name || "No Name");
+        setProfilePicUrl(userData.photoURL || ""); // You can set a fallback image here
+      }
+    } catch (error) {
+      console.error("Error loading user profile:", error);
+    }
+  };
+
   const fetchPostsCount = async () => {
     if (!user) return;
-
     try {
       const imagesQuery = query(
-        collection(db, "images"), // Fetch from "images" collection
-        where("userEmail", "==", user.email) // Filter by logged-in user
+        collection(db, "images"),
+        where("userEmail", "==", user.email)
       );
       const imagesSnapshot = await getDocs(imagesQuery);
-
-      setPostsCount(imagesSnapshot.size); // Get count of documents
+      setPostsCount(imagesSnapshot.size);
     } catch (error) {
       console.error("Error fetching posts count:", error);
     }
   };
+
   const fetchUserImages = async () => {
     setLoading(true);
     try {
@@ -98,11 +113,10 @@ const UserDashboard = () => {
       console.error("Error logging out:", error);
     }
   };
-  fetchPostsCount();
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
-      <h2>{user?.displayName}</h2>
+      <h2>{displayName}</h2>
 
       <div
         className="userdetails"
@@ -113,10 +127,9 @@ const UserDashboard = () => {
           gap: "10px",
         }}
       >
-        {/* <p>Email: {user?.email}</p> */}
-        {user?.photoURL && (
+        {profilePicUrl && (
           <img
-            src={user.photoURL}
+            src={profilePicUrl}
             alt="User Profile"
             style={{
               width: "100px",
@@ -137,15 +150,15 @@ const UserDashboard = () => {
         >
           <div>
             <p>{postsCount}</p>
-            <p> Posts</p>
+            <p>Posts</p>
           </div>
           <div>
             <p>{followers}</p>
-            <p> Followers</p>
+            <p>Followers</p>
           </div>
           <div>
             <p>{following}</p>
-            <p> Following</p>
+            <p>Following</p>
           </div>
         </div>
       </div>
@@ -198,12 +211,6 @@ const UserDashboard = () => {
                 key={image.id}
                 style={{ border: "1px solid #ccc", padding: "10px" }}
               >
-                {/* <img
-                  src={image.imageBase64}
-                  alt="Uploaded"
-                  width="50%"
-                  height="auto"
-                /> */}
                 <img
                   src={image.imageBase64}
                   alt="Uploaded"

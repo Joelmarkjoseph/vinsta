@@ -34,6 +34,11 @@ function Navbar() {
             </Link>
           </li>
           <li>
+            <Link to="/editp" onClick={() => setIsOpen(false)}>
+              <FaUpload className="nav-icon" /> Edit Profile
+            </Link>
+          </li>
+          <li>
             <Link to="/search" onClick={() => setIsOpen(false)}>
               <FaSearch className="nav-icon" /> Search
             </Link>
